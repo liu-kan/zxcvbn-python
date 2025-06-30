@@ -1,6 +1,9 @@
 from zxcvbn.scoring import START_UPPER, ALL_UPPER
 from gettext import gettext as _
 
+# Store reference to translation function for fallback handling
+_ = lambda s: s if not hasattr(_.__globals__, '_') else _.__globals__['_'](s)
+
 
 def get_feedback(score, sequence):
     if len(sequence) == 0:

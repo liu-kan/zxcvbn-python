@@ -1,4 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+from setuptools.command.build import build as _build
+from babel.messages.frontend import compile_catalog
+
+class build(_build):
+    def run(self):
+        self.run_command('compile_catalog')
+        super().run()
 
 with open('README.rst') as file:
     long_description = file.read()
@@ -6,7 +13,11 @@ with open('README.rst') as file:
 setup(
     name='zxcvbn',
     version='4.5.0',
-    packages=['zxcvbn'],
+    packages=find_packages(),
+    include_package_data=True,
+    package_data={
+        'zxcvbn': ['locale/*/LC_MESSAGES/*.mo'],
+    },
     url='https://github.com/dwolfhub/zxcvbn-python',
     download_url='https://github.com/dwolfhub/zxcvbn-python/tarball/v4.5.0',
     license='MIT',
@@ -33,5 +44,9 @@ setup(
         'Programming Language :: Python :: 3.12',
         'Topic :: Security',
         'Topic :: Software Development :: Libraries :: Python Modules',
-    ]
+    ],
+    cmdclass={
+        'build': build,
+        'compile_catalog': compile_catalog,
+    },
 )
