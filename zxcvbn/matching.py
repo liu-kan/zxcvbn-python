@@ -5,6 +5,8 @@ import functools
 
 from zxcvbn.scoring import most_guessable_match_sequence
 
+import zxcvbn
+
 
 def build_ranked_dict(ordered_list):
     return {word: idx for idx, word in enumerate(ordered_list, 1)}
@@ -18,14 +20,31 @@ def get_ranked_dictionaries():
     """
     global RANKED_DICTIONARIES
 
-    if RANKED_DICTIONARIES is None:
-        # Do the expensive import here only
+    # Fast path: return immediately if already initialized
+    if RANKED_DICTIONARIES is not None:
+        return RANKED_DICTIONARIES
+
+    # If thread-safe mode is enabled, use the lock for initialization
+    if zxcvbn._THREAD_SAFE:
+        with zxcvbn._LOCK:
+            # Check again inside the lock to prevent race condition
+            if RANKED_DICTIONARIES is not None:
+                return RANKED_DICTIONARIES
+            # Initialize in a thread-safe manner
+            from zxcvbn.frequency_lists import FREQUENCY_LISTS
+            temp_dict = {}
+            for name, lst in FREQUENCY_LISTS.items():
+                temp_dict[name] = build_ranked_dict(lst)
+            RANKED_DICTIONARIES = temp_dict
+    else:
+        # Initialize without thread safety (no locking)
         from zxcvbn.frequency_lists import FREQUENCY_LISTS
 
         # Build the dictionary once
-        RANKED_DICTIONARIES = {}
+        temp_dict = {}
         for name, lst in FREQUENCY_LISTS.items():
-          RANKED_DICTIONARIES[name] = build_ranked_dict(lst)
+            temp_dict[name] = build_ranked_dict(lst)
+        RANKED_DICTIONARIES = temp_dict
     return RANKED_DICTIONARIES
 
 

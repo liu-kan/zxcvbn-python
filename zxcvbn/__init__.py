@@ -1,11 +1,27 @@
 import os
 from datetime import datetime
 import gettext
+import threading
 from . import matching, scoring, time_estimates, feedback
 
 
 # Global variable to track the last language code for which translation was set up
 _LAST_LANG_CODE_SETUP = None
+
+_THREAD_SAFE = False
+_LOCK = threading.Lock()
+
+def set_thread_safe(enabled=True):
+    """
+    Configures the thread-safety mode for dictionary loading.
+    Note: This only affects dictionary loading operations in matching.py.
+    
+    Args:
+        enabled (bool): When True, enables thread-safe lazy loading of dictionaries.
+                      Defaults to True.
+    """
+    global _THREAD_SAFE
+    _THREAD_SAFE = enabled
 
 def setup_translation(lang_code='en'):
     """Setup translation function _() for the given language code.
@@ -61,11 +77,12 @@ def setup_translation(lang_code='en'):
     # Update the last configured language code
     _LAST_LANG_CODE_SETUP = lang_code
 
-def zxcvbn(password, user_inputs=None, max_length=72, lang='en'):
+def zxcvbn(password, user_inputs=None, max_length=72, lang='en', thread_safe=False):
     # Throw error if password exceeds max length
     if len(password) > max_length:
         raise ValueError(f"Password exceeds max length of {max_length} characters.")
     setup_translation(lang)
+    set_thread_safe(thread_safe)
     # Python 2/3 compatibility for string types
     import sys
     if sys.version_info[0] == 2:
