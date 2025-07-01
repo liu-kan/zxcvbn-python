@@ -3,6 +3,7 @@ from datetime import datetime
 import gettext
 import threading
 from . import matching, scoring, time_estimates, feedback
+from .zxcvbn_class import ZxcvbnInstance
 
 
 # Global variable to track the last language code for which translation was set up

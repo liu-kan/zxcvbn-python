@@ -1,5 +1,5 @@
 import json
-from zxcvbn import zxcvbn
+from zxcvbn import ZxcvbnInstance
 import sys, getopt
 from decimal import Decimal
 
@@ -39,6 +39,9 @@ def main(argv):
     with open(tests_file) as json_data:
         d = json.load(json_data)
 
+    # Create a ZxcvbnInstance for better performance with cached dictionaries
+    zxcvbn_instance = ZxcvbnInstance(thread_safe=True)  # Single-threaded for compatibility testing
+
     number_of_passwords = len(d)
     scores_collision = 0
     guesses_collision = 0
@@ -50,8 +53,8 @@ def main(argv):
             update_console_status(i*100/number_of_passwords)
         i += 1
         py_zxcvbn_scroe = dict()
-        py_zxcvbn_scroe_full = zxcvbn(js_zxcvbn_score['password'])
-        py_zxcvbn_scroe["password"] = py_zxcvbn_scroe_full["password"]
+        py_zxcvbn_scroe_full = zxcvbn_instance.set_password(js_zxcvbn_score['password'])
+        py_zxcvbn_scroe["password"] = js_zxcvbn_score['password']  # Use original password since result doesn't include it
         py_zxcvbn_scroe["guesses"] = py_zxcvbn_scroe_full["guesses"]
         py_zxcvbn_scroe["score"] = py_zxcvbn_scroe_full["score"]
 
