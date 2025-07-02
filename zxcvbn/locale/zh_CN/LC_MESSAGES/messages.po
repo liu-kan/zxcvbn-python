@@ -125,3 +125,41 @@ msgstr "反转的单词也没有更难猜。"
 #: zxcvbn/feedback.py:129
 msgid "Predictable substitutions like '@' instead of 'a' don't help very much."
 msgstr "像用'@'代替'a'这种可预测的替换帮助不大。"
+
+#: zxcvbn/time_estimates.py:55
+msgid "less than a second"
+msgstr "不到一秒"
+
+#: zxcvbn/time_estimates.py:58
+#, python-format
+msgid "%s second"
+msgstr "%s秒"
+
+#: zxcvbn/time_estimates.py:61
+#, python-format
+msgid "%s minute"
+msgstr "%s分钟"
+
+#: zxcvbn/time_estimates.py:64
+#, python-format
+msgid "%s hour"
+msgstr "%s小时"
+
+#: zxcvbn/time_estimates.py:67
+#, python-format
+msgid "%s day"
+msgstr "%s天"
+
+#: zxcvbn/time_estimates.py:70
+#, python-format
+msgid "%s month"
+msgstr "%s个月"
+
+#: zxcvbn/time_estimates.py:73
+#, python-format
+msgid "%s year"
+msgstr "%s年"
+
+#: zxcvbn/time_estimates.py:75
+msgid "centuries"
+msgstr "数百年"

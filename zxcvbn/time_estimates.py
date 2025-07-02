@@ -1,4 +1,5 @@
 from decimal import Decimal, Context, Inexact
+from gettext import gettext as _
 
 def estimate_attack_times(guesses):
     crack_times_seconds = {
@@ -51,27 +52,27 @@ def display_time(seconds):
     year = month * 12
     century = year * 100
     if seconds < 1:
-        display_num, display_str = None, 'less than a second'
+        display_num, display_str = None, _('less than a second')
     elif seconds < minute:
         base = round(seconds)
-        display_num, display_str = base, '%s second' % base
+        display_num, display_str = base, _('%s second') % base
     elif seconds < hour:
         base = round(seconds / minute)
-        display_num, display_str = base, '%s minute' % base
+        display_num, display_str = base, _('%s minute') % base
     elif seconds < day:
         base = round(seconds / hour)
-        display_num, display_str = base, '%s hour' % base
+        display_num, display_str = base, _('%s hour') % base
     elif seconds < month:
         base = round(seconds / day)
-        display_num, display_str = base, '%s day' % base
+        display_num, display_str = base, _('%s day') % base
     elif seconds < year:
         base = round(seconds / month)
-        display_num, display_str = base, '%s month' % base
+        display_num, display_str = base, _('%s month') % base
     elif seconds < century:
         base = round(seconds / year)
-        display_num, display_str = base, '%s year' % base
+        display_num, display_str = base, _('%s year') % base
     else:
-        display_num, display_str = None, 'centuries'
+        display_num, display_str = None, _('centuries')
 
     if display_num and display_num != 1:
         display_str += 's'

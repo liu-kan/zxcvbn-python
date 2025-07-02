@@ -243,6 +243,8 @@ class ZxcvbnInstance:
         Args:
             lang (str): New language code
         """
+        if self._lang == lang or (lang=='' and self._lang =='en') or (lang=='en' and self._lang ==''):
+            return
         if self._thread_safe:
             with self._lock:
                 self._lang = lang

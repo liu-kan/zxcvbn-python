@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: liukan@126.com\n"
-"POT-Creation-Date: 2025-06-30 11:42+0800\n"
+"POT-Creation-Date: 2025-07-02 13:53+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <liukan@126.com>\n"
 "Language-Team: LANGUAGE <liukan@126.com>\n"
@@ -17,111 +17,149 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: zxcvbn/feedback.py:10
+#: zxcvbn/feedback.py:31
 msgid "Use a few words, avoid common phrases."
 msgstr ""
 
-#: zxcvbn/feedback.py:11
+#: zxcvbn/feedback.py:32
 msgid "No need for symbols, digits, or uppercase letters."
 msgstr ""
 
-#: zxcvbn/feedback.py:27
+#: zxcvbn/feedback.py:48
 msgid "Add another word or two. Uncommon words are better."
 msgstr ""
 
-#: zxcvbn/feedback.py:46
+#: zxcvbn/feedback.py:67
 msgid "Straight rows of keys are easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:48
+#: zxcvbn/feedback.py:69
 msgid "Short keyboard patterns are easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:53
+#: zxcvbn/feedback.py:74
 msgid "Use a longer keyboard pattern with more turns."
 msgstr ""
 
-#: zxcvbn/feedback.py:58
+#: zxcvbn/feedback.py:79
 msgid "Repeats like \"aaa\" are easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:60
+#: zxcvbn/feedback.py:81
 msgid "Repeats like \"abcabcabc\" are only slightly harder to guess than \"abc\"."
 msgstr ""
 
-#: zxcvbn/feedback.py:65
+#: zxcvbn/feedback.py:86
 msgid "Avoid repeated words and characters."
 msgstr ""
 
-#: zxcvbn/feedback.py:70
+#: zxcvbn/feedback.py:91
 msgid "Sequences like \"abc\" or \"6543\" are easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:72
+#: zxcvbn/feedback.py:93
 msgid "Avoid sequences."
 msgstr ""
 
-#: zxcvbn/feedback.py:78
+#: zxcvbn/feedback.py:99
 msgid "Recent years are easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:80
+#: zxcvbn/feedback.py:101
 msgid "Avoid recent years."
 msgstr ""
 
-#: zxcvbn/feedback.py:81
+#: zxcvbn/feedback.py:102
 msgid "Avoid years that are associated with you."
 msgstr ""
 
-#: zxcvbn/feedback.py:86
+#: zxcvbn/feedback.py:107
 msgid "Dates are often easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:88
+#: zxcvbn/feedback.py:109
 msgid "Avoid dates and years that are associated with you."
 msgstr ""
 
-#: zxcvbn/feedback.py:99
+#: zxcvbn/feedback.py:120
 msgid "This is a top-10 common password."
 msgstr ""
 
-#: zxcvbn/feedback.py:101
+#: zxcvbn/feedback.py:122
 msgid "This is a top-100 common password."
 msgstr ""
 
-#: zxcvbn/feedback.py:103
+#: zxcvbn/feedback.py:124
 msgid "This is a very common password."
 msgstr ""
 
-#: zxcvbn/feedback.py:105
+#: zxcvbn/feedback.py:126
 msgid "This is similar to a commonly used password."
 msgstr ""
 
-#: zxcvbn/feedback.py:108
+#: zxcvbn/feedback.py:129
 msgid "A word by itself is easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:112
+#: zxcvbn/feedback.py:133
 msgid "Names and surnames by themselves are easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:114
+#: zxcvbn/feedback.py:135
 msgid "Common names and surnames are easy to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:121
+#: zxcvbn/feedback.py:142
 msgid "Capitalization doesn't help very much."
 msgstr ""
 
-#: zxcvbn/feedback.py:123
+#: zxcvbn/feedback.py:144
 msgid "All-uppercase is almost as easy to guess as all-lowercase."
 msgstr ""
 
-#: zxcvbn/feedback.py:127
+#: zxcvbn/feedback.py:148
 msgid "Reversed words aren't much harder to guess."
 msgstr ""
 
-#: zxcvbn/feedback.py:129
+#: zxcvbn/feedback.py:150
 msgid "Predictable substitutions like '@' instead of 'a' don't help very much."
+msgstr ""
+
+#: zxcvbn/time_estimates.py:55
+msgid "less than a second"
+msgstr ""
+
+#: zxcvbn/time_estimates.py:58
+#, python-format
+msgid "%s second"
+msgstr ""
+
+#: zxcvbn/time_estimates.py:61
+#, python-format
+msgid "%s minute"
+msgstr ""
+
+#: zxcvbn/time_estimates.py:64
+#, python-format
+msgid "%s hour"
+msgstr ""
+
+#: zxcvbn/time_estimates.py:67
+#, python-format
+msgid "%s day"
+msgstr ""
+
+#: zxcvbn/time_estimates.py:70
+#, python-format
+msgid "%s month"
+msgstr ""
+
+#: zxcvbn/time_estimates.py:73
+#, python-format
+msgid "%s year"
+msgstr ""
+
+#: zxcvbn/time_estimates.py:75
+msgid "centuries"
 msgstr ""
 
