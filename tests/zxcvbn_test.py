@@ -56,16 +56,27 @@ def test_chinese_language_support():
            "单个词语容易被猜中。", \
            "Returns Chinese translation for single-word passwords"
 
-    # test fallback to English if translation not found
-    result = zxcvbn(password, lang='fr')  # French not installed
+def test_french_language_support():
+    # test French translation
+    password = "musculature"
+    result = zxcvbn(password, lang='fr_FR')
     
     assert result["feedback"]["warning"] == \
-           "A word by itself is easy to guess.", \
-           "Falls back to English for unsupported languages"
+           "Un mot seul est facile à deviner.", \
+           "Returns French translation for single-word passwords"
 
-    # test English if translation not found
-    result = zxcvbn(password)  # French not installed
+def test_language_fallback():
+    # test fallback to English when translation not found
+    password = "musculature"
     
+    # For unsupported language
+    result = zxcvbn(password, lang='es')  # Spanish not installed
     assert result["feedback"]["warning"] == \
            "A word by itself is easy to guess.", \
            "Falls back to English for unsupported languages"
+           
+    # For default case
+    result = zxcvbn(password)  # No language specified
+    assert result["feedback"]["warning"] == \
+           "A word by itself is easy to guess.", \
+           "Falls back to English when no language specified"
