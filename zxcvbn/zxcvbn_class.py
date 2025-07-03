@@ -19,7 +19,7 @@ class ZxcvbnInstance:
         Initialize a zxcvbn instance with persistent dictionaries and translations.
         
         Args:
-            lang (str): Language code for translations (e.g. 'en', 'zh_CN')
+            lang (str): Language code for translations (e.g. 'en', 'zh_Hans')
             user_inputs (list): List of user-specific inputs to include in dictionary
             max_length (int): Maximum password length to evaluate
             thread_safe (bool): Enable thread-safe operations
@@ -84,23 +84,28 @@ class ZxcvbnInstance:
         # Core logic for implementing locale aliasing
         if self._lang.lower().startswith('zh'):
             # For any Chinese variants, build a fallback chain
-            languages_to_try = [self._lang, 'zh_CN', 'zh']
+            languages_to_try = [self._lang, 'zh_hans']
             # Remove duplicates while preserving order
             languages_to_try = sorted(set(languages_to_try), key=languages_to_try.index)
         else:
             # For other languages, use directly
             languages_to_try = [self._lang]
+    
 
         try:
             # Pass our constructed language list to gettext
             translation = gettext.translation(
                 DOMAIN,
                 localedir=LOCALE_DIR,
-                languages=languages_to_try,
+                languages=languages_to_try,  # languages parameter should be a list
                 fallback=True  # fallback=True ensures no exception if all languages not found
             )
             
             self._translation_func = translation.gettext
+            actual_lang = translation.info().get('language')
+            matched_lang = actual_lang if actual_lang else 'en-us'  # fallback
+            print(f"Loaded translation. Requested: {languages_to_try} | Actual: {actual_lang} | Using: {matched_lang}") 
+            
             
         except FileNotFoundError:
             # If even fallback language is not found, use default gettext (no translation)
@@ -137,26 +142,35 @@ class ZxcvbnInstance:
         
         start = datetime.now()
         
-        # Prepare user inputs for this evaluation
-        sanitized_inputs = []
-        for arg in self._user_inputs:
-            if not isinstance(arg, (str, bytes)):
-                arg = str(arg)
-            sanitized_inputs.append(arg.lower())
+        # Ensure feedback module uses our translation function for this evaluation
+        original_feedback_func = getattr(feedback, '_', None)
+        feedback._ = self._translation_func
         
-        # Get matches using our cached dictionaries
-        matches = self._omnimatch(password, sanitized_inputs)
-        result = scoring.most_guessable_match_sequence(password, matches)
-        result['calc_time'] = datetime.now() - start
+        try:
+            # Prepare user inputs for this evaluation
+            sanitized_inputs = []
+            for arg in self._user_inputs:
+                if not isinstance(arg, (str, bytes)):
+                    arg = str(arg)
+                sanitized_inputs.append(arg.lower())
+            
+            # Get matches using our cached dictionaries
+            matches = self._omnimatch(password, sanitized_inputs)
+            result = scoring.most_guessable_match_sequence(password, matches)
+            result['calc_time'] = datetime.now() - start
 
-        attack_times = time_estimates.estimate_attack_times(result['guesses'])
-        for prop, val in attack_times.items():
-            result[prop] = val
+            attack_times = time_estimates.estimate_attack_times(result['guesses'])
+            for prop, val in attack_times.items():
+                result[prop] = val
 
-        result['feedback'] = feedback.get_feedback(result['score'], result['sequence'])
-        
-        self._last_result = result
-        return result
+            result['feedback'] = feedback.get_feedback(result['score'], result['sequence'])
+            
+            self._last_result = result
+            return result
+        finally:
+            # Restore original feedback function if it existed
+            if original_feedback_func is not None:
+                feedback._ = original_feedback_func
     
     def _omnimatch(self, password, user_inputs):
         """
@@ -236,6 +250,9 @@ class ZxcvbnInstance:
             if self._password is not None:
                 self._evaluate_password(self._password)
     
+    def get_lang(self):
+        return self._lang
+
     def set_language(self, lang):
         """
         Change the language and reload translations.

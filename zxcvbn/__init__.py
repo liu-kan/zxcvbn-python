@@ -24,11 +24,11 @@ def set_thread_safe(enabled=True):
     global _THREAD_SAFE
     _THREAD_SAFE = enabled
 
-def setup_translation(lang_code='en'):
+def setup_translation(lang_code='en_US'):
     """Setup translation function _() for the given language code.
     
     Args:
-        lang_code (str): Language code (e.g. 'en', 'zh_CN'). Defaults to 'en'.
+        lang_code (str): Language code (e.g. 'en', 'zh_Hans'). Defaults to 'en'.
     """
     global _  # Make _ available globally
     global _LAST_LANG_CODE_SETUP
@@ -44,7 +44,7 @@ def setup_translation(lang_code='en'):
     # 1. Core logic for implementing locale aliasing
     if lang_code.lower().startswith('zh'):
         # For any Chinese variants, build a fallback chain
-        languages_to_try = [lang_code, 'zh_CN', 'zh']
+        languages_to_try = [lang_code, 'zh_Hans']
         # Remove duplicates while preserving order
         languages_to_try = sorted(set(languages_to_try), key=languages_to_try.index)
     else:
@@ -52,19 +52,25 @@ def setup_translation(lang_code='en'):
         languages_to_try = [lang_code]
 
     print(f"Attempting to load translations for '{lang_code}'. Search path: {languages_to_try}")
-
+    
     try:
         # 2. Pass our constructed language list to gettext
         translation = gettext.translation(
             DOMAIN,
-            localedir=LOCALE_DIR,
+            localedir=LOCALE_DIR, 
             languages=languages_to_try,
-            fallback=True # fallback=True ensures no exception if all languages not found
+            fallback=True
         )
+        
+        # Get detailed info about the loaded translation
+        actual_lang = translation.info().get('language')
+        matched_lang = actual_lang if actual_lang else 'en-us'  # fallback
+        print(f"Loaded translation. Requested: {languages_to_try} | Actual: {actual_lang} | Using: {matched_lang}")
         
         # 3. Install translation function _() globally
         translation.install()
-        print(f"Successfully loaded translation: {translation.info().get('language')}")
+        # Update the last configured language code with the matched code
+        _LAST_LANG_CODE_SETUP = matched_lang
 
     except FileNotFoundError:
         # If even fallback language is not found, use default gettext (no translation)
@@ -75,15 +81,14 @@ def setup_translation(lang_code='en'):
     from . import feedback
     feedback._ = _
 
-    # Update the last configured language code
-    _LAST_LANG_CODE_SETUP = lang_code
+
 
 def zxcvbn(password, user_inputs=None, max_length=72, lang='en', thread_safe=False):
     # Throw error if password exceeds max length
     if len(password) > max_length:
         raise ValueError(f"Password exceeds max length of {max_length} characters.")
-    setup_translation(lang)
     set_thread_safe(thread_safe)
+    setup_translation(lang)
     # Python 2/3 compatibility for string types
     import sys
     if sys.version_info[0] == 2:

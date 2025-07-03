@@ -50,7 +50,7 @@ def test_empty_password():
 def test_chinese_language_support():
     # test Chinese translation
     password = "musculature"
-    result = zxcvbn(password, lang='zh')
+    result = zxcvbn(password, lang='zh_Hans')
     
     assert result["feedback"]["warning"] == \
            "单个词语容易被猜中。", \

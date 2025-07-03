@@ -1,0 +1,165 @@
+# English (United States) translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <liukan@126.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: liukan@126.com\n"
+"POT-Creation-Date: 2025-07-02 13:53+0800\n"
+"PO-Revision-Date: 2025-07-03 18:22+0800\n"
+"Last-Translator: FULL NAME <liukan@126.com>\n"
+"Language: en_US\n"
+"Language-Team: en_US <liukan@126.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: zxcvbn/feedback.py:31
+msgid "Use a few words, avoid common phrases." 
+msgstr "Use a few words, avoid common phrases."
+
+#: zxcvbn/feedback.py:32
+msgid "No need for symbols, digits, or uppercase letters."
+msgstr "No need for symbols, digits, or uppercase letters."
+
+#: zxcvbn/feedback.py:48
+msgid "Add another word or two. Uncommon words are better."
+msgstr "Add another word or two. Uncommon words are better."
+
+#: zxcvbn/feedback.py:67
+msgid "Straight rows of keys are easy to guess."
+msgstr "Straight rows of keys are easy to guess."
+
+#: zxcvbn/feedback.py:69
+msgid "Short keyboard patterns are easy to guess."
+msgstr "Short keyboard patterns are easy to guess."
+
+#: zxcvbn/feedback.py:74
+msgid "Use a longer keyboard pattern with more turns."
+msgstr "Use a longer keyboard pattern with more turns."
+
+#: zxcvbn/feedback.py:79
+msgid "Repeats like \"aaa\" are easy to guess."
+msgstr "Repeats like \"aaa\" are easy to guess."
+
+#: zxcvbn/feedback.py:81
+msgid "Repeats like \"abcabcabc\" are only slightly harder to guess than \"abc\"."
+msgstr "Repeats like \"abcabcabc\" are only slightly harder to guess than \"abc\"."
+
+#: zxcvbn/feedback.py:86
+msgid "Avoid repeated words and characters."
+msgstr "Avoid repeated words and characters."
+
+#: zxcvbn/feedback.py:91
+msgid "Sequences like \"abc\" or \"6543\" are easy to guess."
+msgstr "Sequences like \"abc\" or \"6543\" are easy to guess."
+
+#: zxcvbn/feedback.py:93
+msgid "Avoid sequences."
+msgstr "Avoid sequences."
+
+#: zxcvbn/feedback.py:99
+msgid "Recent years are easy to guess."
+msgstr "Recent years are easy to guess."
+
+#: zxcvbn/feedback.py:101
+msgid "Avoid recent years."
+msgstr "Avoid recent years."
+
+#: zxcvbn/feedback.py:102
+msgid "Avoid years that are associated with you."
+msgstr "Avoid years that are associated with you."
+
+#: zxcvbn/feedback.py:107
+msgid "Dates are often easy to guess."
+msgstr "Dates are often easy to guess."
+
+#: zxcvbn/feedback.py:109
+msgid "Avoid dates and years that are associated with you."
+msgstr "Avoid dates and years that are associated with you."
+
+#: zxcvbn/feedback.py:120
+msgid "This is a top-10 common password."
+msgstr "This is a top-10 common password."
+
+#: zxcvbn/feedback.py:122
+msgid "This is a top-100 common password."
+msgstr "This is a top-100 common password."
+
+#: zxcvbn/feedback.py:124
+msgid "This is a very common password."
+msgstr "This is a very common password."
+
+#: zxcvbn/feedback.py:126
+msgid "This is similar to a commonly used password."
+msgstr "This is similar to a commonly used password."
+
+#: zxcvbn/feedback.py:129
+msgid "A word by itself is easy to guess."
+msgstr "A word by itself is easy to guess."
+
+#: zxcvbn/feedback.py:133
+msgid "Names and surnames by themselves are easy to guess."
+msgstr "Names and surnames by themselves are easy to guess."
+
+#: zxcvbn/feedback.py:135
+msgid "Common names and surnames are easy to guess."
+msgstr "Common names and surnames are easy to guess."
+
+#: zxcvbn/feedback.py:142
+msgid "Capitalization doesn't help very much."
+msgstr "Capitalization doesn't help very much."
+
+#: zxcvbn/feedback.py:144
+msgid "All-uppercase is almost as easy to guess as all-lowercase."
+msgstr "All-uppercase is almost as easy to guess as all-lowercase."
+
+#: zxcvbn/feedback.py:148
+msgid "Reversed words aren't much harder to guess."
+msgstr "Reversed words aren't much harder to guess."
+
+#: zxcvbn/feedback.py:150
+msgid "Predictable substitutions like '@' instead of 'a' don't help very much."
+msgstr "Predictable substitutions like '@' instead of 'a' don't help very much."
+
+#: zxcvbn/time_estimates.py:55
+msgid "less than a second"
+msgstr "less than a second"
+
+#: zxcvbn/time_estimates.py:58
+#, python-format
+msgid "%s second"
+msgstr "%s second"
+
+#: zxcvbn/time_estimates.py:61
+#, python-format
+msgid "%s minute"
+msgstr "%s minute"
+
+#: zxcvbn/time_estimates.py:64
+#, python-format
+msgid "%s hour"
+msgstr "%s hour"
+
+#: zxcvbn/time_estimates.py:67
+#, python-format
+msgid "%s day"
+msgstr "%s day"
+
+#: zxcvbn/time_estimates.py:70
+#, python-format
+msgid "%s month"
+msgstr "%s month"
+
+#: zxcvbn/time_estimates.py:73
+#, python-format
+msgid "%s year"
+msgstr "%s year"
+
+#: zxcvbn/time_estimates.py:75
+msgid "centuries"
+msgstr "centuries"

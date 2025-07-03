@@ -22,7 +22,7 @@ def basic_usage_example():
     print("=== Basic Usage Example ===")
     
     # Create a zxcvbn instance with Chinese language support
-    zx = ZxcvbnInstance(lang='zh_CN', thread_safe=True)
+    zx = ZxcvbnInstance(lang='zh_Hans', thread_safe=True)
     
     # Evaluate a password
     result = zx.set_password("password123")
@@ -76,7 +76,7 @@ def language_switching_example():
     print(f"English feedback: {result['feedback']['warning']}")
     
     # Switch to Chinese
-    zx.set_language('zh_CN')
+    zx.set_language('zh_Hans')
     result = zx.get_result()
     print(f"Chinese feedback: {result['feedback']['warning']}")
     
@@ -128,11 +128,11 @@ def performance_comparison():
     # Test original function (reloads dictionaries each time)
     start_time = time.time()
     for password in passwords:
-        result = zxcvbn(password, lang='zh_CN')
+        result = zxcvbn(password, lang='zh_Hans')
     function_time = time.time() - start_time
     
     # Test instance approach (cached dictionaries)
-    zx = ZxcvbnInstance(lang='zh_CN')
+    zx = ZxcvbnInstance(lang='zh_Hans')
     start_time = time.time()
     for password in passwords:
         result = zx.set_password(password)
@@ -157,7 +157,7 @@ def advanced_usage_example():
     
     user_zx = ZxcvbnInstance(
         user_inputs=['user', 'guest'],
-        lang='zh_CN',
+        lang='zh_Hans',
         max_length=100
     )
     

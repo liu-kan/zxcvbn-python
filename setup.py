@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 from setuptools.command.build import build as _build
 from setuptools.command.sdist import sdist as _sdist
 from babel.messages.frontend import compile_catalog
@@ -29,7 +29,7 @@ with open('README.rst') as file:
 setup(
     name='zxcvbn',
     version='4.5.0',
-    packages=find_packages(),
+    packages=find_namespace_packages(include=['zxcvbn', 'zxcvbn.*']),
     include_package_data=True,
     package_data={
         'zxcvbn': ['locale/*/LC_MESSAGES/*.mo'],

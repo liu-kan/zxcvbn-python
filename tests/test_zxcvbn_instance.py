@@ -89,7 +89,7 @@ class TestZxcvbnInstance(unittest.TestCase):
         result_en = instance.set_password("musculature")
         
         # Switch to Chinese
-        instance.set_language('zh_CN')
+        instance.set_language('zh_Hans')
         result_zh = instance.get_result()
         
         # Feedback should be in Chinese
@@ -173,7 +173,7 @@ class TestZxcvbnInstance(unittest.TestCase):
     
     def test_persistent_translation(self):
         """Test that translation is loaded only once."""
-        instance = ZxcvbnInstance(lang='zh_CN')
+        instance = ZxcvbnInstance(lang='zh_Hans')
         
         # First evaluation
         instance.set_password("password1")
@@ -205,11 +205,11 @@ class TestZxcvbnInstance(unittest.TestCase):
     
     def test_repr(self):
         """Test string representation of instance."""
-        instance = ZxcvbnInstance(lang='zh_CN', thread_safe=True)
+        instance = ZxcvbnInstance(lang='zh_Hans', thread_safe=True)
         repr_str = repr(instance)
         
         self.assertIn("ZxcvbnInstance", repr_str)
-        self.assertIn("lang='zh_CN'", repr_str)
+        self.assertIn("lang='zh_Hans'", repr_str)
         self.assertIn("thread_safe=True", repr_str)
         self.assertIn("password_set=False", repr_str)
         
