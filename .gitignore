@@ -9,3 +9,4 @@ zxcvbn*.egg-info
 .vscode
 *.mo
 .tox
+docs/_build/

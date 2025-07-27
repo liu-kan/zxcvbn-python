@@ -162,3 +162,26 @@ The project is licensed under the MIT license.
 
 .. |Build Status| image:: https://travis-ci.org/dwolfhub/zxcvbn-python.svg?branch=master
    :target: https://travis-ci.org/dwolfhub/zxcvbn-python
+
+
+多语言支持
+-----------
+zxcvbn支持多种语言的反馈信息，例如中文：
+
+.. code:: python
+    
+    from zxcvbn import ZxcvbnInstance
+    zx = ZxcvbnInstance(lang='zh_Hans')
+    results = zx.set_password('mima123')
+    print(results['feedback']['suggestions'])
+
+性能优化
+--------
+对于高频调用场景，使用实例模式可提升性能：
+
+.. code:: python
+    
+    from zxcvbn import ZxcvbnInstance
+    zx = ZxcvbnInstance()
+    for password in user_passwords:
+        results = zx.set_password(password)
