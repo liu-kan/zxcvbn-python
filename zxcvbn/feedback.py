@@ -1,6 +1,9 @@
 from zxcvbn.scoring import START_UPPER, ALL_UPPER
-from gettext import gettext as _
+from gettext import gettext
 from typing import Callable, Optional
+
+# Type-safe wrapper for gettext to satisfy mypy
+_: Callable[[str], str] = gettext
 
 
 def get_feedback(score, sequence):
