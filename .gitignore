@@ -10,3 +10,4 @@ zxcvbn*.egg-info
 *.mo
 .tox
 docs/_build/
+dist/zxcvbn-4.5.0-py3-none-any.whl
