@@ -217,6 +217,171 @@ class TestZxcvbnInstance(unittest.TestCase):
         instance.set_password("test")
         repr_str = repr(instance)
         self.assertIn("password_set=True", repr_str)
+    
+    def test_temp_user_inputs_basic(self):
+        """Test basic temporary user inputs functionality."""
+        instance = ZxcvbnInstance()
+        
+        # Evaluate with temporary user inputs
+        result = instance.set_passwd_and_input('alice123', temp_user_inputs=['alice', 'alice@example.com'])
+        
+        # Result should be valid
+        self.assertIsInstance(result, dict)
+        self.assertIn('score', result)
+        
+        # Check that temporary user inputs were used in matching
+        all_matches = instance._omnimatch('alice123', ['alice', 'alice@example.com'])
+        found_user_match = False
+        for match in all_matches:
+            if match.get('dictionary_name') == 'user_inputs' and 'alice' in match.get('matched_word', ''):
+                found_user_match = True
+                break
+        self.assertTrue(found_user_match, "Temporary user input should be detected")
+    
+    def test_temp_user_inputs_isolation(self):
+        """Test that different evaluations with temp inputs are isolated."""
+        instance = ZxcvbnInstance()
+        
+        # First evaluation with Alice's inputs
+        result1 = instance.set_passwd_and_input('alice123', temp_user_inputs=['alice'])
+        
+        # Second evaluation with Bob's inputs
+        result2 = instance.set_passwd_and_input('bob456', temp_user_inputs=['bob'])
+        
+        # Verify Bob's evaluation doesn't contain Alice's inputs
+        bob_matches = instance._omnimatch('alice123', ['bob'])
+        found_alice = False
+        for match in bob_matches:
+            if match.get('dictionary_name') == 'user_inputs' and 'alice' in match.get('matched_word', ''):
+                found_alice = True
+                break
+        self.assertFalse(found_alice, "Previous user's inputs should not persist")
+    
+    def test_temp_user_inputs_merge(self):
+        """Test merging instance-level and temporary user inputs."""
+        # Create instance with instance-level user inputs
+        instance = ZxcvbnInstance(user_inputs=['company', 'acmecorp'])
+        
+        # Evaluate with additional temporary user inputs
+        result = instance.set_passwd_and_input(
+            'john_acmecorp_123',
+            temp_user_inputs=['john', 'john@example.com']
+        )
+        
+        # Verify both instance and temporary inputs are used
+        combined_inputs = ['company', 'acmecorp', 'john', 'john@example.com']
+        all_matches = instance._omnimatch('john_acmecorp_123', combined_inputs)
+        
+        found_company = False
+        found_john = False
+        for match in all_matches:
+            if match.get('dictionary_name') == 'user_inputs':
+                if 'company' in match.get('matched_word', '') or 'acmecorp' in match.get('matched_word', ''):
+                    found_company = True
+                if 'john' in match.get('matched_word', ''):
+                    found_john = True
+        
+        self.assertTrue(found_company, "Instance-level user inputs should be present")
+        self.assertTrue(found_john, "Temporary user inputs should be present")
+    
+    def test_temp_user_inputs_empty(self):
+        """Test behavior with empty temporary user inputs."""
+        instance = ZxcvbnInstance(user_inputs=['test'])
+        
+        # Test with None
+        result1 = instance.set_passwd_and_input('password123', temp_user_inputs=None)
+        self.assertIsInstance(result1, dict)
+        
+        # Test with empty list
+        result2 = instance.set_passwd_and_input('password123', temp_user_inputs=[])
+        self.assertIsInstance(result2, dict)
+        
+        # Both should use instance-level inputs only
+        self.assertEqual(result1['score'], result2['score'])
+    
+    def test_temp_user_inputs_backward_compat(self):
+        """Test backward compatibility with set_password()."""
+        instance = ZxcvbnInstance(user_inputs=['test'])
+        
+        # Old method should still work
+        result1 = instance.set_password('password123')
+        
+        # Should be equivalent to new method with no temp inputs
+        result2 = instance.set_passwd_and_input('password123', temp_user_inputs=None)
+        
+        # Results should be identical
+        self.assertEqual(result1['score'], result2['score'])
+        self.assertEqual(result1['guesses'], result2['guesses'])
+    
+    def test_temp_user_inputs_thread_safe(self):
+        """Test thread safety with temporary user inputs."""
+        instance = ZxcvbnInstance(thread_safe=True)
+        results = []
+        errors = []
+        
+        def worker(user_id):
+            try:
+                user_name = f'user{user_id}'
+                password = f'{user_name}123'
+                result = instance.set_passwd_and_input(
+                    password,
+                    temp_user_inputs=[user_name, f'{user_name}@example.com']
+                )
+                results.append((user_id, result['score']))
+            except Exception as e:
+                errors.append(e)
+        
+        # Create multiple threads with different user inputs
+        threads = []
+        for i in range(10):
+            t = threading.Thread(target=worker, args=(i,))
+            threads.append(t)
+            t.start()
+        
+        # Wait for all threads to complete
+        for t in threads:
+            t.join()
+        
+        # Check that no errors occurred
+        self.assertEqual(len(errors), 0, f"Errors occurred: {errors}")
+        
+        # Check that all threads completed
+        self.assertEqual(len(results), 10)
+    
+    def test_temp_user_inputs_no_cache_pollution(self):
+        """Test that temporary inputs don't pollute the instance cache."""
+        instance = ZxcvbnInstance(user_inputs=['permanent'])
+        
+        # Store original cache ID
+        original_cache_id = id(instance._ranked_dictionaries)
+        original_user_inputs_cache = instance._ranked_dictionaries.get('user_inputs', {})
+        
+        # Evaluate with temporary inputs
+        result = instance.set_passwd_and_input(
+            'alice123',
+            temp_user_inputs=['alice', 'temporary']
+        )
+        
+        # Cache should still be the same object
+        self.assertEqual(id(instance._ranked_dictionaries), original_cache_id)
+        
+        # Original user_inputs in cache should not contain temporary inputs
+        current_user_inputs_cache = instance._ranked_dictionaries.get('user_inputs', {})
+        self.assertNotIn('alice', current_user_inputs_cache)
+        self.assertNotIn('temporary', current_user_inputs_cache)
+        self.assertIn('permanent', current_user_inputs_cache)
+    
+    def test_temp_user_inputs_max_length(self):
+        """Test max_length validation with temp_user_inputs."""
+        instance = ZxcvbnInstance(max_length=10)
+        
+        # Should work with short password
+        result = instance.set_passwd_and_input('short', temp_user_inputs=['test'])
+        self.assertIsInstance(result, dict)
+        
+        # Should raise error with long password even with temp inputs
+        with self.assertRaises(ValueError):
+            instance.set_passwd_and_input('this_is_too_long', temp_user_inputs=['test'])
 
 
 if __name__ == '__main__':

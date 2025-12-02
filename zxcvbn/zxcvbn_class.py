@@ -114,9 +114,47 @@ class ZxcvbnInstance:
         # Update feedback module's translation function
         feedback._ = self._translation_func
     
+    def set_passwd_and_input(self, password, temp_user_inputs=None):
+        """
+        Set or update the password to be evaluated with optional temporary user inputs.
+        
+        This is the core method that handles both password evaluation and temporary
+        user inputs. Temporary user inputs are only used for this specific evaluation
+        and do not modify the instance's persistent state.
+        
+        Args:
+            password (str): The password to evaluate
+            temp_user_inputs (list, optional): Temporary user-specific inputs to include
+                in the dictionary for this evaluation only. These inputs are merged with
+                the instance-level user inputs (if any) but do not persist across evaluations.
+                Defaults to None.
+            
+        Returns:
+            dict: Password strength evaluation result
+            
+        Raises:
+            ValueError: If password exceeds max_length
+            
+        Examples:
+            >>> zx = ZxcvbnInstance()
+            >>> result = zx.set_passwd_and_input('alice123', temp_user_inputs=['alice', 'alice@example.com'])
+            >>> # The temporary inputs are only used for this evaluation
+        """
+        if len(password) > self._max_length:
+            raise ValueError(f"Password exceeds max length of {self._max_length} characters.")
+        
+        if self._thread_safe:
+            with self._lock:
+                return self._evaluate_password(password, temp_user_inputs)
+        else:
+            return self._evaluate_password(password, temp_user_inputs)
+    
     def set_password(self, password):
         """
         Set or update the password to be evaluated.
+        
+        This is a wrapper method that calls set_passwd_and_input() without temporary
+        user inputs, maintaining backward compatibility with existing code.
         
         Args:
             password (str): The password to evaluate
@@ -126,18 +164,20 @@ class ZxcvbnInstance:
             
         Raises:
             ValueError: If password exceeds max_length
+            
+        Note:
+            For evaluations requiring temporary user inputs, use set_passwd_and_input() instead.
         """
-        if len(password) > self._max_length:
-            raise ValueError(f"Password exceeds max length of {self._max_length} characters.")
-        
-        if self._thread_safe:
-            with self._lock:
-                return self._evaluate_password(password)
-        else:
-            return self._evaluate_password(password)
+        return self.set_passwd_and_input(password, temp_user_inputs=None)
     
-    def _evaluate_password(self, password):
-        """Internal method to evaluate password strength."""
+    def _evaluate_password(self, password, temp_user_inputs=None):
+        """
+        Internal method to evaluate password strength.
+        
+        Args:
+            password (str): The password to evaluate
+            temp_user_inputs (list, optional): Temporary user inputs for this evaluation only
+        """
         self._password = password
         
         start = datetime.now()
@@ -148,11 +188,19 @@ class ZxcvbnInstance:
         
         try:
             # Prepare user inputs for this evaluation
+            # Start with instance-level user inputs
             sanitized_inputs = []
             for arg in self._user_inputs:
                 if not isinstance(arg, (str, bytes)):
                     arg = str(arg)
                 sanitized_inputs.append(arg.lower())
+            
+            # Add temporary user inputs if provided
+            if temp_user_inputs:
+                for arg in temp_user_inputs:
+                    if not isinstance(arg, (str, bytes)):
+                        arg = str(arg)
+                    sanitized_inputs.append(arg.lower())
             
             # Get matches using our cached dictionaries
             matches = self._omnimatch(password, sanitized_inputs)
@@ -176,17 +224,32 @@ class ZxcvbnInstance:
         """
         Perform all matches using cached dictionaries.
         This is a simplified version of matching.omnimatch that uses our cached data.
+        
+        Args:
+            password (str): The password to match against
+            user_inputs (list): Combined list of instance-level and temporary user inputs
         """
-        # Create a copy of our dictionaries for this evaluation
+        # Create a shallow copy of our dictionaries for this evaluation
         ranked_dicts = dict(self._ranked_dictionaries)
         
-        # Add user inputs for this specific evaluation (merge with existing user_inputs)
+        # Add user inputs for this specific evaluation
         if user_inputs:
-            # If we already have user_inputs in our cached dictionaries, merge them
-            existing_user_inputs = ranked_dicts.get('user_inputs', {})
-            new_user_inputs = {word: idx for idx, word in enumerate(user_inputs, len(existing_user_inputs) + 1)}
-            existing_user_inputs.update(new_user_inputs)
-            ranked_dicts['user_inputs'] = existing_user_inputs
+            # Create a new user_inputs dictionary for this evaluation
+            # This ensures we don't modify the cached dictionary
+            user_inputs_dict = {}
+            
+            # If the instance has cached user_inputs, copy them first
+            if 'user_inputs' in self._ranked_dictionaries:
+                # Deep copy the user_inputs dict to avoid modifying the cache
+                user_inputs_dict = dict(self._ranked_dictionaries['user_inputs'])
+            
+            # Add new user inputs with rank starting after existing ones
+            start_rank = len(user_inputs_dict) + 1
+            for idx, word in enumerate(user_inputs, start_rank):
+                user_inputs_dict[word] = idx
+            
+            # Set the merged user_inputs in the evaluation copy
+            ranked_dicts['user_inputs'] = user_inputs_dict
         
         matches = []
         
@@ -240,7 +303,7 @@ class ZxcvbnInstance:
                 self._load_dictionaries()
                 # Re-evaluate current password if one is set
                 if self._password is not None:
-                    self._evaluate_password(self._password)
+                    self._evaluate_password(self._password, temp_user_inputs=None)
         else:
             self._user_inputs = user_inputs or []
             # Force reload of dictionaries with new user inputs
@@ -270,7 +333,7 @@ class ZxcvbnInstance:
                 self._setup_translation()
                 # Re-evaluate current password if one is set to get updated feedback
                 if self._password is not None:
-                    self._evaluate_password(self._password)
+                    self._evaluate_password(self._password, temp_user_inputs=None)
         else:
             self._lang = lang
             # Force reload of translation
